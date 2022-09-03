@@ -1,0 +1,158 @@
+body,
+html {
+  line-height: 1;
+  font-family: "PingFang SC", "STHeitiSC-Light", "Helvetica-Light", arial,
+    sans-serif, "Droid Sans Fallback";
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  background: $color-background;
+  color: $color-text;
+}
+
+.g-relative {
+  position: relative;
+}
+
+.slide-enter-active,
+.slide-leave-active {
+  transition: all 0.3s;
+}
+
+.slide-enter-from,
+.slide-leave-to {
+  transform: translate3d(100%, 0, 0);
+}
+
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.3s;
+}
+
+.list-enter-from,
+.list-leave-to {
+  height: 0 !important;
+}
+
+.leave-enter-active,
+.leave-leave-active {
+  transition: all 0.3s;
+}
+
+.leave-enter-from,
+.leave-leave-to {
+  transform: translate3d(100%, 0, 0);
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.5s;
+}
+
+.fade-enter-from {
+  opacity: 0;
+}
+
+.fade-leave-to {
+  opacity: 1;
+}
+
+// 动画
+.move-enter-active,
+.move-leave-active {
+  transition: all 0.5s ease;
+}
+
+.move-enter-from,
+.move-leave-to {
+  transform: translateX(100%);
+}
+
+.pulldown-enter-active,
+.pulldown-leave-active {
+  transition: all 0.3s;
+}
+
+.pulldown-enter-from,
+.pulldown-leave-to {
+  transform: translate3d(0, -100%, 0);
+}
+// 动画
+.popup-enter-active,
+.popup-leave-active {
+  transition: all 0.5s ease;
+}
+.popup-enter-from,
+.popup-leave-to {
+  transform: translateY(100%);
+}
+
+// 从左边离开的动画
+.leave-left-enter-active,
+.leave-left-leave-active {
+  transition: all 0.5s linear;
+}
+
+.leave-left-enter-from,
+.leave-left-leave-to {
+  transform: translate3d(-100%, 0, 0);
+}
+
+// 下拉动画
+.slide-down-enter-active,
+.slide-down-leave-active {
+  transition: all 0.5s linear;
+}
+
+.slide-down-enter-from,
+.slide-down-leave-to {
+  height: 0 !important;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* 旋转动画 指定class为trun即可使用*/
+.turn {
+  animation: turn 10s linear infinite;
+}
+
+/*
+turn : 定义的动画名称
+10s : 动画时间
+linear : 动画平滑
+infinite :使动画无限循环
+transform:rotate(旋转角度)
+%0:动画开始
+%100:动画结束
+*/
+@keyframes turn {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  20% {
+    transform: rotate(72deg);
+  }
+
+  40% {
+    transform: rotate(144deg);
+  }
+
+  60% {
+    transform: rotate(216deg);
+  }
+
+  80% {
+    transform: rotate(288deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
