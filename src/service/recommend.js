@@ -1,5 +1,5 @@
-// import { get } from './base'
+import { get } from './base'
 
-// export function getRecommend(){
-//   return get('/api/getRecommend')
-// }
+export function getRecommend(){
+  return get('/api/getRecommend')
+}

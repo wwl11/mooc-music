@@ -1,0 +1,18 @@
+<template>
+  <div class="recommend">
+    歌手页面
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'singer',
+  async created(){
+
+  }
+}
+</script>
+
+<style>
+
+</style>
