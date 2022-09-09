@@ -5,17 +5,27 @@ import { onMounted,onUnmounted, ref } from "vue";
 
 BScroll.use(ObserveDom)
 
-export default function useScroll(warpperRef,options){
+export default function useScroll(warpperRef,options,emit){
   const scroll = ref(null)
 
   onMounted(()=>{
-    scroll.value = new BScroll(warpperRef.value,{
+    const scrollVal = scroll.value = new BScroll(warpperRef.value,{
       observeDOM:true,
       ...options
     })
+
+    //判断是否传入probeType值 不传入则为0 没有滚动事件
+    if(options.probeType>0){
+      scrollVal.on('scroll',(pos)=>{
+        //通过事件派发
+        emit('scroll',pos)
+      })
+    }
   })
 
   onUnmounted(()=>{
     scroll.value.destroy()
   })
+
+  return scroll
 }
