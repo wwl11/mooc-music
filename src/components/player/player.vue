@@ -1,5 +1,5 @@
 <template>
-  <div class="player">
+  <div class="player" v-show="playList.length">
     <div class="normal-player" v-show="fullScreen">
       <template v-if="currentSong">
         <div class="background">
@@ -12,8 +12,13 @@
           <h1 class="title">{{ currentSong.name }}</h1>
           <h2 class="subtitle">{{ currentSong.singer }}</h2>
         </div>
-        <div class="middle">
-          <div class="middle-l">
+        <div
+          class="middle"
+          @touchstart.prevent="onMiddleTouchStart"
+          @touchmove.prevent="onMiddleTouchMove"
+          @touchend.prevent="onMiddleTouchEnd"
+        >
+          <div class="middle-l" :style="middleLStyle">
             <div class="cd-wrapper">
               <div class="cd" ref="cdRef">
                 <img
@@ -28,7 +33,7 @@
               <div class="playing-lyric">{{ playingLyric }}</div>
             </div>
           </div>
-          <scroll class="middle-r" ref="lyricScrollRef">
+          <scroll class="middle-r" ref="lyricScrollRef" :style="middleRStyle">
             <div class="lyric-wrapper">
               <div v-if="currentLyric" ref="lyricListRef">
                 <p
@@ -48,6 +53,13 @@
         </div>
 
         <div class="bottom">
+          <div class="dot-wrapper">
+            <span class="dot" :class="{ active: currentShow === 'cd' }"></span>
+            <span
+              class="dot"
+              :class="{ active: currentShow === 'lyric' }"
+            ></span>
+          </div>
           <div class="progress-wrapper">
             <span class="time time-l">{{ formatTime(currentTime) }}</span>
             <div class="progress-bar-wrapper">
@@ -84,6 +96,7 @@
         </div>
       </template>
     </div>
+    <mini-player></mini-player>
     <audio
       ref="audioRef"
       @pause="pause"
@@ -106,12 +119,15 @@ import { PLAY_MODE } from "@/assets/js/constant";
 import useCd from "./use-cd.js";
 import useLyric from "./use-lyric";
 import scroll from "../base/scroll/scroll.vue";
+import useMiddleInteractive from "./use-middle-interactvie";
+import miniPlayer from "./mini-player.vue";
 
 export default {
   name: "player",
   components: {
     progressBar,
     scroll,
+    miniPlayer,
   },
   setup() {
     //data
@@ -147,6 +163,15 @@ export default {
       songReady,
       currentTime,
     });
+
+    const {
+      middleLStyle,
+      middleRStyle,
+      currentShow,
+      onMiddleTouchStart,
+      onMiddleTouchMove,
+      onMiddleTouchEnd,
+    } = useMiddleInteractive();
 
     // computed
     const playList = computed(() => store.state.playList);
@@ -312,6 +337,7 @@ export default {
     return {
       fullScreen, //是否展开
       currentSong, //当前歌曲
+      playList, //歌曲列表
       audioRef, //音频dom
       goBack, //返回方法
       playIcon, //播放或者暂停按钮图标
@@ -342,6 +368,12 @@ export default {
       lyricListRef, //歌词列表
       pureMusicLyric, // 纯音乐歌词
       playingLyric, // 当前播放歌词文本
+      middleLStyle, // cd模块拖拽样式
+      middleRStyle, // 歌词模块拖拽样式
+      currentShow, // 当前显示cd还是歌词
+      onMiddleTouchStart, // 中间区域点击回调
+      onMiddleTouchMove, // 中间区域拖拽回调
+      onMiddleTouchEnd, // 中间区域松开回调
     };
   },
 };
@@ -492,6 +524,27 @@ export default {
       position: absolute;
       bottom: 50px;
       width: 100%;
+      .dot-wrapper {
+        text-align: center;
+        font-size: 0;
+
+        .dot {
+          display: inline-block;
+          vertical-align: middle;
+          margin: 0 4px;
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: $color-text-l;
+
+          &.active {
+            width: 20px;
+            border-radius: 5px;
+            background: $color-text-ll;
+          }
+        }
+      }
+
       .progress-wrapper {
         display: flex;
         align-items: center;
