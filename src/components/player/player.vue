@@ -12,6 +12,41 @@
           <h1 class="title">{{ currentSong.name }}</h1>
           <h2 class="subtitle">{{ currentSong.singer }}</h2>
         </div>
+        <div class="middle">
+          <div class="middle-l">
+            <div class="cd-wrapper">
+              <div class="cd" ref="cdRef">
+                <img
+                  :src="currentSong.pic"
+                  class="image"
+                  :class="cdCls"
+                  ref="cdImageRef"
+                />
+              </div>
+            </div>
+            <div class="playing-lyric-wrapper">
+              <div class="playing-lyric">{{ playingLyric }}</div>
+            </div>
+          </div>
+          <scroll class="middle-r" ref="lyricScrollRef">
+            <div class="lyric-wrapper">
+              <div v-if="currentLyric" ref="lyricListRef">
+                <p
+                  class="text"
+                  :class="{ current: currentLineNum === index }"
+                  v-for="(line, index) in currentLyric.lines"
+                  :key="line.num"
+                >
+                  {{ line.txt }}
+                </p>
+              </div>
+              <div class="pure-music" v-show="pureMusicLyric">
+                <p>{{ pureMusicLyric }}</p>
+              </div>
+            </div>
+          </scroll>
+        </div>
+
         <div class="bottom">
           <div class="progress-wrapper">
             <span class="time time-l">{{ formatTime(currentTime) }}</span>
@@ -68,11 +103,15 @@ import useFavorite from "./use-favorite";
 import progressBar from "./progress-bar.vue";
 import { formatTime } from "@/assets/js/util";
 import { PLAY_MODE } from "@/assets/js/constant";
+import useCd from "./use-cd.js";
+import useLyric from "./use-lyric";
+import scroll from "../base/scroll/scroll.vue";
 
 export default {
   name: "player",
   components: {
     progressBar,
+    scroll,
   },
   setup() {
     //data
@@ -92,6 +131,22 @@ export default {
     const { modeIcon, changeMode } = useMode();
 
     const { getFavotiteIcon, toggleFavorite } = useFavorite();
+
+    const { cdCls, cdRef, cdImageRef } = useCd();
+
+    const {
+      currentLyric,
+      currentLineNum,
+      playLyric,
+      lyricScrollRef,
+      lyricListRef,
+      stopLyric,
+      pureMusicLyric,
+      playingLyric,
+    } = useLyric({
+      songReady,
+      currentTime,
+    });
 
     // computed
     const playList = computed(() => store.state.playList);
@@ -128,7 +183,13 @@ export default {
         return;
       }
       const audioEl = audioRef.value;
-      newPlaying ? audioEl.play() : audioEl.pause();
+      if (newPlaying) {
+        audioEl.play();
+        playLyric();
+      } else {
+        audioEl.pause();
+        stopLyric();
+      }
     });
 
     //methods
@@ -204,6 +265,7 @@ export default {
         return;
       }
       songReady.value = true;
+      playLyric();
     }
 
     function error() {
@@ -221,6 +283,10 @@ export default {
       //将设置的正在拖拽进度条状态设置为true
       progressChanging = true;
       currentTime.value = currentSong.value.duration * progress;
+      //拖动进度条 先调用playLyric 再调用stopLyric
+      //最后松开的时候再调用一次playLyric
+      playLyric();
+      stopLyric();
     }
 
     function onProgressChange(progress) {
@@ -231,6 +297,7 @@ export default {
       if (!playing.value) {
         store.commit("setPlayingState", true);
       }
+      playLyric();
     }
 
     function end() {
@@ -266,6 +333,15 @@ export default {
       onProgressChanging, //拖动进度条的回调
       onProgressChange, //松开进度条的回调
       end, //歌曲结束回调
+      cdCls, //cd是否旋转
+      cdRef, //cd内层
+      cdImageRef, //cd外层
+      currentLyric, //当前歌曲歌词
+      currentLineNum, //当前播放的歌词行数
+      lyricScrollRef, //歌词scroll
+      lyricListRef, //歌词列表
+      pureMusicLyric, // 纯音乐歌词
+      playingLyric, // 当前播放歌词文本
     };
   },
 };
@@ -324,6 +400,92 @@ export default {
         text-align: center;
         font-size: $font-size-medium;
         color: $color-text;
+      }
+    }
+    .middle {
+      position: fixed;
+      width: 100%;
+      top: 80px;
+      bottom: 170px;
+      white-space: nowrap;
+      font-size: 0;
+      .middle-l {
+        display: inline-block;
+        vertical-align: top;
+        position: relative;
+        width: 100%;
+        height: 0;
+        padding-top: 80%;
+        .cd-wrapper {
+          position: absolute;
+          left: 10%;
+          top: 0;
+          width: 80%;
+          box-sizing: border-box;
+          height: 100%;
+          .cd {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            img {
+              position: absolute;
+              left: 0;
+              top: 0;
+              width: 100%;
+              height: 100%;
+              box-sizing: border-box;
+              border-radius: 50%;
+              border: 10px solid rgba(255, 255, 255, 0.1);
+            }
+            .playing {
+              animation: rotate 20s linear infinite;
+            }
+          }
+        }
+        .playing-lyric-wrapper {
+          width: 80%;
+          margin: 30px auto 0 auto;
+          overflow: hidden;
+          text-align: center;
+          .playing-lyric {
+            height: 20px;
+            line-height: 20px;
+            font-size: $font-size-medium;
+            color: $color-text-l;
+          }
+        }
+      }
+      .middle-r {
+        display: inline-block;
+        vertical-align: top;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        .lyric-wrapper {
+          width: 80%;
+          margin: 0 auto;
+          overflow: hidden;
+          text-align: center;
+
+          .text {
+            line-height: 32px;
+            color: $color-text-l;
+            font-size: $font-size-medium;
+
+            &.current {
+              color: $color-text;
+            }
+          }
+        }
+
+        .pure-music {
+          margin: 150px auto;
+          z-index: 999;
+          text-align: center;
+          line-height: 32px;
+          color: $color-text-l;
+          font-size: $font-size-medium;
+        }
       }
     }
     .bottom {
