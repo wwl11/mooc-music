@@ -64,6 +64,7 @@
             <span class="time time-l">{{ formatTime(currentTime) }}</span>
             <div class="progress-bar-wrapper">
               <progress-bar
+                ref="barRef"
                 :progress="progress"
                 @progress-changing="onProgressChanging"
                 @progress-change="onProgressChange"
@@ -96,7 +97,7 @@
         </div>
       </template>
     </div>
-    <mini-player></mini-player>
+    <mini-player :progress="progress" :togglePlay="togglePlay"></mini-player>
     <audio
       ref="audioRef"
       @pause="pause"
@@ -121,6 +122,7 @@ import useLyric from "./use-lyric";
 import scroll from "../base/scroll/scroll.vue";
 import useMiddleInteractive from "./use-middle-interactvie";
 import miniPlayer from "./mini-player.vue";
+import { nextTick } from "@vue/runtime-core";
 
 export default {
   name: "player",
@@ -135,6 +137,7 @@ export default {
     const songReady = ref(false);
     const currentTime = ref(0);
     let progressChanging = false;
+    const barRef = ref(null);
 
     //vuex
     const fullScreen = computed(() => store.state.fullScreen);
@@ -214,6 +217,15 @@ export default {
       } else {
         audioEl.pause();
         stopLyric();
+      }
+    });
+
+    // 监听重新打开全屏播放器 保证进度条是最新状态
+    watch(fullScreen, async (newFullScreen) => {
+      if (newFullScreen) {
+        //因为涉及到dom的渲染 所以需要等待nextTick
+        await nextTick();
+        barRef.value.setOffset(progress.value);
       }
     });
 
@@ -374,6 +386,7 @@ export default {
       onMiddleTouchStart, // 中间区域点击回调
       onMiddleTouchMove, // 中间区域拖拽回调
       onMiddleTouchEnd, // 中间区域松开回调
+      barRef, // 进度条dom
     };
   },
 };

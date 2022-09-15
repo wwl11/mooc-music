@@ -35,8 +35,7 @@ export default {
   },
   watch: {
     progress(newProgress) {
-      const barWidth = this.$el.clientWidth - progressBtnWidth;
-      this.offset = barWidth * newProgress;
+      this.setOffset(newProgress);
     },
   },
   computed: {
@@ -76,6 +75,11 @@ export default {
       const barWidth = this.$el.clientWidth - progressBtnWidth;
       const progress = offsetWidth / barWidth;
       this.$emit("progress-change", progress);
+    },
+    //防止在播放器隐藏时歌曲进度切换出现问题
+    setOffset(progress) {
+      const barWidth = this.$el.clientWidth - progressBtnWidth;
+      this.offset = barWidth * progress;
     },
   },
 };
