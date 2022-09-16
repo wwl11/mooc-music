@@ -156,25 +156,30 @@ export default {
   }
   .control {
     flex: 0 0 30px;
-    // width: 30px;
+    width: 30px;
     padding: 0 10px;
-    color: $color-theme;
-
-    .icon-pause-mini,
-    .icon-play-mini,
-    .icon-music {
-      font-size: 32px;
-      color: $color-theme;
+    .icon-playlist {
+      position: relative;
+      top: -2px;
+      font-size: 28px;
+      color: $color-theme-d;
     }
-
     .icon-mini {
-      font-size: 32px;
       position: absolute;
       left: 0;
       top: 0;
-      // left: 7px;
-      // top: 6px;
+      color: $color-theme-d;
+      font-size: 32px;
     }
+  }
+  &.mini-enter-active,
+  &.mini-leave-active {
+    transition: all 0.6s cubic-bezier(0.45, 0, 0.55, 1);
+  }
+  &.mini-enter-from,
+  &.mini-leave-to {
+    opacity: 0;
+    transform: translate3d(0, 100%, 0);
   }
 }
 </style>
