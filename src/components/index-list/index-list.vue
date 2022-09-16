@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import scroll from "@/components/base/scroll/scroll";
+import scroll from "@/components/wrap-scroll";
 import useFixed from "./use-fixed.js";
 import useShortcut from "./use-shortcut.js";
 

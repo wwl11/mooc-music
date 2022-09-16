@@ -100,7 +100,7 @@
               <div class="icon i-right">
                 <i
                   @click="toggleFavorite(currentSong)"
-                  :class="getFavotiteIcon(currentSong)"
+                  :class="getFavoriteIcon(currentSong)"
                 ></i>
               </div>
             </div>
@@ -161,7 +161,7 @@ export default {
     // hooks
     const { modeIcon, changeMode } = useMode();
 
-    const { getFavotiteIcon, toggleFavorite } = useFavorite();
+    const { getFavoriteIcon, toggleFavorite } = useFavorite();
 
     const { cdCls, cdRef, cdImageRef } = useCd();
 
@@ -219,6 +219,7 @@ export default {
       const audioEl = audioRef.value;
       audioEl.src = newSong.url;
       audioEl.play();
+      store.commit("setPlayingState", true);
     });
 
     watch(playing, (newPlaying) => {
@@ -277,9 +278,6 @@ export default {
           index = list.length - 1;
         }
         store.commit("setCurrentIndex", index);
-        if (!playing.value) {
-          store.commit("setPlayingState", true);
-        }
       }
     }
 
@@ -298,9 +296,6 @@ export default {
           index = 0;
         }
         store.commit("setCurrentIndex", index);
-        if (!playing.value) {
-          store.commit("setPlayingState", true);
-        }
       }
     }
 
@@ -377,7 +372,7 @@ export default {
       error, //音频加载出错
       modeIcon, //播放歌曲模式图标
       changeMode, //切换播放歌曲模式
-      getFavotiteIcon, //是否收藏图标显示
+      getFavoriteIcon, //是否收藏图标显示
       toggleFavorite, //切换该歌曲收藏状态
       currentTime, //歌曲播放的实时进度
       progress, //歌曲播放进度百分比

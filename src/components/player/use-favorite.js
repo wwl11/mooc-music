@@ -8,7 +8,7 @@ export default function useFavorite() {
   const favoriteList = computed(()=> store.state.favoriteList)
   const maxLen = 100
 
-  function getFavotiteIcon(song) {
+  function getFavoriteIcon(song) {
     return isFavorite(song)? 'icon-favorite' : 'icon-not-favorite'
   }
 
@@ -35,7 +35,7 @@ export default function useFavorite() {
   }
 
   return {
-    getFavotiteIcon,
+    getFavoriteIcon,
     toggleFavorite
   }
 }
