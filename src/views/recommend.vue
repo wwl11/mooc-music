@@ -10,7 +10,12 @@
         <div class="recommend-list">
           <h1 class="list-title" v-show="!loading">热门歌单推荐</h1>
           <ul>
-            <li v-for="item in albums" class="item" :key="item.id">
+            <li
+              v-for="item in albums"
+              class="item"
+              :key="item.id"
+              @click="selectItem(item)"
+            >
               <div class="icon">
                 <img v-lazy="item.pic" width="60" height="60" />
               </div>
@@ -27,6 +32,11 @@
         </div>
       </div>
     </scroll>
+    <router-view v-slot="{ Component }">
+      <transition name="slide" appear>
+        <component :is="Component" :data="selectedAlbum"></component>
+      </transition>
+    </router-view>
   </div>
 </template>
 
@@ -34,6 +44,8 @@
 import { getRecommend } from "@/service/recommend";
 import slider from "@/components/base/slider/slider";
 import scroll from "@/components/wrap-scroll";
+import storage from "good-storage";
+import { ALBUM_KEY } from "@/assets/js/constant";
 
 export default {
   name: "recommend",
@@ -45,6 +57,7 @@ export default {
     return {
       sliders: [],
       albums: [],
+      selectedAlbum: null,
     };
   },
   computed: {
@@ -56,6 +69,18 @@ export default {
     const result = await getRecommend();
     this.sliders = result.sliders;
     this.albums = result.albums;
+  },
+  methods: {
+    selectItem(album) {
+      this.selectedAlbum = album;
+      this.cacheAlbum(album);
+      this.$router.push({
+        path: `/recommend/${album.id}`,
+      });
+    },
+    cacheAlbum(album) {
+      storage.session.set(ALBUM_KEY, album);
+    },
   },
 };
 </script>
@@ -82,44 +107,42 @@ export default {
         top: 0;
         width: 100%;
         height: 100%;
-        z-index: 999;
       }
     }
     .recommend-list {
       .list-title {
-        line-height: 50px;
+        height: 65px;
+        line-height: 65px;
         text-align: center;
         font-size: $font-size-medium;
         color: $color-theme;
       }
+      .item {
+        display: flex;
+        box-sizing: border-box;
+        align-items: center;
+        padding: 0 20px 20px 20px;
 
-      ul {
-        .item {
-          box-sizing: border-box;
-          padding: 15px;
+        .icon {
+          flex: 0 0 60px;
+          width: 60px;
+          padding-right: 20px;
+        }
+        .text {
           display: flex;
-
-          .icon > img {
-            width: 60px;
-            height: 60px;
-          }
-
-          .text {
-            margin-left: 20px;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-evenly;
-
-            .name {
-              font-size: $font-size-medium;
-            }
-
-            .title {
-              color: $color-text-d;
-              font-size: $font-size-medium;
-            }
-          }
+          flex-direction: column;
+          justify-content: center;
+          flex: 1;
+          line-height: 20px;
+          overflow: hidden;
+          font-size: $font-size-medium;
+        }
+        .name {
+          margin-bottom: 10px;
+          color: $color-text;
+        }
+        .title {
+          color: $color-text-d;
         }
       }
     }
