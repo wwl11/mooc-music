@@ -13,46 +13,40 @@
 
 <script>
 export default {
-  name: 'my-tab',
+  name: "my-tab",
   data() {
     return {
       tabs: [
-        { text: '推荐', pagePath: '/recommend' },
-        { text: '歌手', pagePath: '/singer' },
-        { text: '排行', pagePath: '/top-list' },
-        { text: '搜索', pagePath: '/search' }
-      ]
-    }
-  }
-}
+        { text: "推荐", pagePath: "/recommend" },
+        { text: "歌手", pagePath: "/singer" },
+        { text: "排行", pagePath: "/top-list" },
+        // { text: "搜索", pagePath: "/search" },
+      ],
+    };
+  },
+};
 </script>
 
 <style lang="scss" scoped>
-  .tabbar {
+.tabbar {
   display: flex;
+  height: 44px;
+  line-height: 44px;
+  font-size: $font-size-medium;
+
   .tabbar-item {
     flex: 1;
     text-align: center;
-    line-height: 30px;
 
-    > span {
-      display: inline-block;
-      height: 100%;
-      padding: 0 2px;
-      color: $color-text-d;
-      font-size: $font-size-medium;
-      &.active {
-        position: relative;
+    .tab-link {
+      padding-bottom: 5px;
+      color: $color-text-l;
+    }
+
+    &.router-link-active {
+      .tab-link {
         color: $color-theme;
-        &::after {
-          position: absolute;
-          content: "";
-          bottom: 0;
-          left: 0;
-          width: 100%;
-          height: 2px;
-          background-color: $color-theme;
-        }
+        border-bottom: 2px solid $color-theme;
       }
     }
   }
