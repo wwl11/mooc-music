@@ -10,7 +10,8 @@ const state = {
   playMode: PLAY_MODE.sequence,
   currentIndex: 0,
   fullScreen: false,
-  favoriteList: load(FAVORITE_KEY)
+  favoriteList: load(FAVORITE_KEY),
+  playHistory: []
 }
 
 export default state

@@ -135,6 +135,7 @@ import useMiddleInteractive from "./use-middle-interactvie";
 import miniPlayer from "./mini-player.vue";
 import { nextTick } from "@vue/runtime-core";
 import useAnimation from "./use-animation";
+import usePlayHistory from "./use-play-history";
 
 export default {
   name: "player",
@@ -190,6 +191,8 @@ export default {
 
     const { cdWrapperRef, enter, afterEnter, leave, afterLeave } =
       useAnimation();
+
+    const { savePlay } = usePlayHistory();
 
     // computed
     const playList = computed(() => store.state.playList);
@@ -313,6 +316,7 @@ export default {
       }
       songReady.value = true;
       playLyric();
+      savePlay(currentSong.value);
     }
 
     function error() {

@@ -9,7 +9,7 @@ const Base64 = require('js-base64').Base64
 const getSecuritySign = require('./sign')
 
 const ERR_OK = 0
-const token = 5381
+const token = FA2B8DB3DE34516A08A9B2DBE10B25B2
 
 // 歌曲图片加载失败时使用的默认图片
 const fallbackPicUrl =

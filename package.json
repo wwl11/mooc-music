@@ -3,8 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "concurrently \"node .\\NeteaseCloudMusicApi\\app.js\" \"vue-cli-service serve\"",
-    "build": "vue-cli-service build"
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "deploy": "npm run build && nohup node backend/prod.server.js &"
   },
   "dependencies": {
     "axios": "^0.26.1",
